@@ -1,0 +1,13 @@
+[Unit]
+Description=WL-MIO Modbus TCP Gateway
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+WorkingDirectory=/usr/local/bin/
+ExecStart=/usr/local/bin/wlmiomb.sh
+
+[Install]
+WantedBy=multi-user.target
