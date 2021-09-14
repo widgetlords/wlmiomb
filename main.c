@@ -293,6 +293,21 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
     else
     { return; }
   }
+  else if(!strncmp(node->info.name, "com.widgetlords.mio.6090", 50))
+  {
+    regw.length = 1;
+
+    if(r >= 61 && r <= 66)
+    {
+      snprintf(name, sizeof(name), "ch%u.type", r - 60);
+
+      regw.type = WLMIO_REGISTER_VALUE_UINT8;
+
+      memcpy(regw.value, &v, 1);
+    }
+    else
+    { return; }
+  }
   else
   { return; }
 
@@ -999,6 +1014,47 @@ int8_t read_holding_register(const struct node* const node, const uint16_t reg, 
       memcpy(&v, regr.value, 2);
     }
   }
+  else if(!strncmp(node->info.name, "com.widgetlords.mio.6090", 50))
+  {
+    if(reg >= 49 && reg <= 60)
+    {
+      snprintf(name, sizeof(name), "ch%u.input", (reg - 49) / 2 + 1);
+      if(strcmp(cache.name, name))
+      {
+        strncpy(cache.name, name, sizeof(cache.name));
+        cache.name[sizeof(cache.name) - 1] = '\0';
+        r = wlmio_register_access_sync(node->id, cache.name, NULL, &cache.reg);
+        if(r < 0 || cache.reg.type != WLMIO_REGISTER_VALUE_UINT32)
+        { return -1; }
+      }
+
+      memcpy(&v, cache.reg.value + (~reg & 1) * 2, 2);
+    }
+    else if(reg >= 61 && reg <= 66)
+    {
+      snprintf(name, sizeof(name), "ch%u.type", reg - 60);
+      r = wlmio_register_access_sync(node->id, name, NULL, &regr);
+      if(r < 0 || regr.type != WLMIO_REGISTER_VALUE_UINT8)
+      { return -1; }
+      memcpy(&v, regr.value, 1);
+    }
+    else if(reg >= 67 && reg <= 72)
+    {
+      snprintf(name, sizeof(name), "ch%u.counts", reg - 66);
+      r = wlmio_register_access_sync(node->id, name, NULL, &regr);
+      if(r < 0 || regr.type != WLMIO_REGISTER_VALUE_UINT16)
+      { return -1; }
+      memcpy(&v, regr.value, 2);
+    }
+    else if(reg >= 73 && reg <= 75)
+    {
+      snprintf(name, sizeof(name), "t%u", reg - 72);
+      r = wlmio_register_access_sync(node->id, name, NULL, &regr);
+      if(r < 0 || regr.type != WLMIO_REGISTER_VALUE_UINT16)
+      { return -1; }
+      memcpy(&v, regr.value, 2);
+    }
+  }
 
   v = htons(v);
   memcpy(dst, &v, 2);
@@ -1206,6 +1262,8 @@ void info_callback(int32_t r, void* p)
   { node->holding_registers_length += 4; }
   else if(!strncmp(node->info.name, "com.widgetlords.mio.6080", 50))
   { node->holding_registers_length += 41; }
+  else if(!strncmp(node->info.name, "com.widgetlords.mio.6090", 50))
+  { node->holding_registers_length += 26; }
 }
 
 
