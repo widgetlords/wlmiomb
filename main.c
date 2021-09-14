@@ -396,7 +396,7 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
 struct register_cache
 {
   struct wlmio_register_access reg;
-  const char* name;
+  char name[257];
 };
 struct register_cache cache;
 
@@ -413,6 +413,7 @@ int8_t read_holding_register(const struct node* const node, const uint16_t reg, 
     return 0;
   }
 
+  char name[257];
   struct wlmio_register_access regr;
   uint16_t v = 0;
   int32_t r;
@@ -430,7 +431,8 @@ int8_t read_holding_register(const struct node* const node, const uint16_t reg, 
     {
       if(strcmp(cache.name, "input"))
       {
-        cache.name = "input";
+        strncpy(cache.name, "input", sizeof(cache.name));
+        cache.name[sizeof(cache.name) - 1] = '\0';
         r = wlmio_register_access_sync(node->id, "input", NULL, &cache.reg);
         if(r < 0 || cache.reg.type != WLMIO_REGISTER_VALUE_UINT16)
         { return -1; }
@@ -636,7 +638,8 @@ int8_t read_holding_register(const struct node* const node, const uint16_t reg, 
     {
       if(strcmp(cache.name, "ch1.input"))
       {
-        cache.name = "ch1.input";
+        strncpy(cache.name, "ch1.input", sizeof(cache.name));
+        cache.name[sizeof(cache.name) - 1] = '\0';
         r = wlmio_register_access_sync(node->id, cache.name, NULL, &cache.reg);
         if(r < 0 || cache.reg.type != WLMIO_REGISTER_VALUE_UINT32)
         { return -1; }
@@ -648,7 +651,8 @@ int8_t read_holding_register(const struct node* const node, const uint16_t reg, 
     {
       if(strcmp(cache.name, "ch2.input"))
       {
-        cache.name = "ch2.input";
+        strncpy(cache.name, "ch2.input", sizeof(cache.name));
+        cache.name[sizeof(cache.name) - 1] = '\0';
         r = wlmio_register_access_sync(node->id, cache.name, NULL, &cache.reg);
         if(r < 0 || cache.reg.type != WLMIO_REGISTER_VALUE_UINT32)
         { return -1; }
@@ -660,7 +664,8 @@ int8_t read_holding_register(const struct node* const node, const uint16_t reg, 
     {
       if(strcmp(cache.name, "ch3.input"))
       {
-        cache.name = "ch3.input";
+        strncpy(cache.name, "ch3.input", sizeof(cache.name));
+        cache.name[sizeof(cache.name) - 1] = '\0';
         r = wlmio_register_access_sync(node->id, cache.name, NULL, &cache.reg);
         if(r < 0 || cache.reg.type != WLMIO_REGISTER_VALUE_UINT32)
         { return -1; }
@@ -672,7 +677,8 @@ int8_t read_holding_register(const struct node* const node, const uint16_t reg, 
     {
       if(strcmp(cache.name, "ch4.input"))
       {
-        cache.name = "ch4.input";
+        strncpy(cache.name, "ch4.input", sizeof(cache.name));
+        cache.name[sizeof(cache.name) - 1] = '\0';
         r = wlmio_register_access_sync(node->id, cache.name, NULL, &cache.reg);
         if(r < 0 || cache.reg.type != WLMIO_REGISTER_VALUE_UINT32)
         { return -1; }
@@ -1098,7 +1104,7 @@ void modbus_handler(struct mb_msg* const msg)
 {
   assert(msg);
 
-  cache.name = "";
+  cache.name[0] = '\0';
 
   if(msg->uid == 255) // Gateway itself
   { mb_generate_exception(msg, 0x01); }
