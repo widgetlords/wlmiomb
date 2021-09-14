@@ -168,11 +168,11 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
   { return; }
 
   struct wlmio_register_access regw;
-  const char* name;
+  char name[257];
 
   if(!strncmp(node->info.name, "com.widgetlords.mio.6010", 50) && r == 49)
   {
-    name = "sample_interval";
+    strncpy(name, "sample_interval", sizeof(name));
     regw.type = WLMIO_REGISTER_VALUE_UINT16;
     regw.length = 1;
 
@@ -180,14 +180,8 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
   }
   else if(!strncmp(node->info.name, "com.widgetlords.mio.6030", 50))
   {
-    if(r == 49)
-    { name = "ch1.output"; }
-    else if(r == 50)
-    { name = "ch2.output"; }
-    else if(r == 51)
-    { name = "ch3.output"; }
-    else if(r == 52)
-    { name = "ch4.output"; }
+    if(r >= 49 && r <= 52)
+    { snprintf(name, sizeof(name), "ch%u.output", r - 48); }
     else
     { return; }
 
@@ -198,14 +192,8 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
   }
   else if(!strncmp(node->info.name, "com.widgetlords.mio.6040", 50))
   {
-    if(r == 54)
-    { name = "ch1.mode"; }
-    else if(r == 55)
-    { name = "ch2.mode"; }
-    else if(r == 56)
-    { name = "ch3.mode"; }
-    else if(r == 57)
-    { name = "ch4.mode"; }
+    if(r >= 54 && r <= 57)
+    { snprintf(name, sizeof(name), "ch%u.mode", r - 53); }
     else
     { return; }
 
@@ -220,14 +208,7 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
 
     if(r >= 49 && r <= 52)
     {
-      if(r == 49)
-      { name = "ch1.output"; }
-      else if(r == 50)
-      { name = "ch2.output"; }
-      else if(r == 51)
-      { name = "ch3.output"; }
-      else if(r == 52)
-      { name = "ch4.output"; }
+      snprintf(name, sizeof(name), "ch%u.output", r - 48);
 
       regw.type = WLMIO_REGISTER_VALUE_UINT16;
 
@@ -235,14 +216,7 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
     }
     else if(r >= 53 && r <= 56)
     {
-      if(r == 53)
-      { name = "ch1.mode"; }
-      else if(r == 54)
-      { name = "ch2.mode"; }
-      else if(r == 55)
-      { name = "ch3.mode"; }
-      else if(r == 56)
-      { name = "ch4.mode"; }
+      snprintf(name, sizeof(name), "ch%u.mode", r - 52);
 
       regw.type = WLMIO_REGISTER_VALUE_UINT8;
 
@@ -257,7 +231,7 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
 
     if(r == 49)
     {
-      name = "sample_interval";
+      strncpy(name, "sample_interval", sizeof(name));
 
       regw.type = WLMIO_REGISTER_VALUE_UINT16;
 
@@ -265,30 +239,12 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
     }
     else if(r >= 58 && r <= 69)
     {
-      if(r == 58)
-      { name = "ch1.mode"; }
-      else if(r == 59)
-      { name = "ch2.mode"; }
-      else if(r == 60)
-      { name = "ch3.mode"; }
-      else if(r == 61)
-      { name = "ch4.mode"; }
-      else if(r == 62)
-      { name = "ch1.bias"; }
-      else if(r == 63)
-      { name = "ch2.bias"; }
-      else if(r == 64)
-      { name = "ch3.bias"; }
-      else if(r == 65)
-      { name = "ch4.bias"; }
-      else if(r == 66)
-      { name = "ch1.polarity"; }
-      else if(r == 67)
-      { name = "ch2.polarity"; }
-      else if(r == 68)
-      { name = "ch3.polarity"; }
-      else if(r == 69)
-      { name = "ch4.polarity"; }
+      if(r <= 61)
+      { snprintf(name, sizeof(name), "ch%u.mode", r - 57); }
+      else if(r <= 65)
+      { snprintf(name, sizeof(name), "ch%u.bias", r - 61); }
+      else if(r <= 69)
+      { snprintf(name, sizeof(name), "ch%u.polarity", r - 65); }
 
       regw.type = WLMIO_REGISTER_VALUE_UINT8;
 
@@ -299,14 +255,8 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
   }
   else if(!strncmp(node->info.name, "com.widgetlords.mio.6070", 50))
   {
-    if(r == 49)
-    { name = "ch1.output"; }
-    else if(r == 50)
-    { name = "ch2.output"; }
-    else if(r == 51)
-    { name = "ch3.output"; }
-    else if(r == 52)
-    { name = "ch4.output"; }
+    if(r >= 49 && r <= 52)
+    { snprintf(name, sizeof(name), "ch%u.output", r - 48); }
     else
     { return; }
 
@@ -322,39 +272,11 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
     if(r == 49 || (r >= 65 && r <= 80))
     {
       if(r == 49)
-      { name = "sample_interval"; }
-      else if(r == 65)
-      { name = "ch1.beta"; }
-      else if(r == 66)
-      { name = "ch2.beta"; }
-      else if(r == 67)
-      { name = "ch3.beta"; }
-      else if(r == 68)
-      { name = "ch4.beta"; }
-      else if(r == 69)
-      { name = "ch5.beta"; }
-      else if(r == 70)
-      { name = "ch6.beta"; }
-      else if(r == 71)
-      { name = "ch7.beta"; }
-      else if(r == 72)
-      { name = "ch8.beta"; }
-      else if(r == 73)
-      { name = "ch1.t0"; }
-      else if(r == 74)
-      { name = "ch2.t0"; }
-      else if(r == 75)
-      { name = "ch3.t0"; }
-      else if(r == 76)
-      { name = "ch4.t0"; }
-      else if(r == 77)
-      { name = "ch5.t0"; }
-      else if(r == 78)
-      { name = "ch6.t0"; }
-      else if(r == 79)
-      { name = "ch7.t0"; }
-      else if(r == 80)
-      { name = "ch8.t0"; }
+      { strncpy(name, "sample_interval", sizeof(name)); }
+      else if(r >= 65 && r <= 72)
+      { snprintf(name, sizeof(name), "ch%u.beta", r - 64); }
+      else if(r >= 73 && r <= 80)
+      { snprintf(name, sizeof(name), "ch%u.t0", r - 72); }
 
       regw.type = WLMIO_REGISTER_VALUE_UINT16;
 
@@ -362,22 +284,7 @@ void write_holding_register(struct node* const node, const uint16_t r, const uin
     }
     else if(r >= 57 && r <= 64)
     {
-      if(r == 57)
-      { name = "ch1.enabled"; }
-      else if(r == 58)
-      { name = "ch2.enabled"; }
-      else if(r == 59)
-      { name = "ch3.enabled"; }
-      else if(r == 60)
-      { name = "ch4.enabled"; }
-      else if(r == 61)
-      { name = "ch5.enabled"; }
-      else if(r == 62)
-      { name = "ch6.enabled"; }
-      else if(r == 63)
-      { name = "ch7.enabled"; }
-      else if(r == 64)
-      { name = "ch8.enabled"; }
+      snprintf(name, sizeof(name), "ch%u.enabled", r - 56);
 
       regw.type = WLMIO_REGISTER_VALUE_UINT8;
 
